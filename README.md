@@ -4,7 +4,7 @@
 library(shiny)
 
 ui <- fluidPage(
-  titlePanel("Quelles sont les habitudes des traideurs sur la bloc chain"),
+  titlePanel("Quelles sont les habitudes des traideurs sur la bloc chain"),sqd,fnhqds;
   sidebarLayout(
     sidebarPanel("Analyse globale")
   )
