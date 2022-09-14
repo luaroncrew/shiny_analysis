@@ -30,8 +30,11 @@ names(analysis_dataframe)[length(names(analysis_dataframe))]= 'token_out_symbol'
 names(analysis_dataframe)[7] = 'decimals_token_in'
 analysis_dataframe[9] = NULL
 
-ech = analysis_dataframe['token_in_symbol'][]
-analysis_dataframe['token_in_symbol'] = tolower(analysis_dataframe$token_in_symbol)
+ech = analysis_dataframe$token_in_symbol
+lower = tolower(ech)
+
+analysis_dataframe$token_in_symbol = lower
+
 
 # join the token_id for token_in_symbol
 analysis_dataframe = merge(
