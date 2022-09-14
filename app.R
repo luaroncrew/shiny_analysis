@@ -6,7 +6,16 @@
 #
 #    http://shiny.rstudio.com/
 
-
+# Installer
+install.packages("tm")  # pour le text mining
+install.packages("SnowballC") # pour le text stemming
+install.packages("wordcloud") # générateur de word-cloud 
+install.packages("RColorBrewer") # Palettes de couleurs
+# Charger
+library("tm")
+library("SnowballC")
+library("wordcloud")
+library("RColorBrewer")
 library(shiny)
 library(shinydashboard)
 library(shinythemes)
@@ -15,8 +24,6 @@ library(readr)
 
 data <- read_csv("faucet.csv")
 View(data)
-
-#path = paste(getwd(), "/blockchain-image.png", sep = "")
 
 # Define UI for 
 ui <- fluidPage(
@@ -41,6 +48,7 @@ ui <- fluidPage(
     tabPanel("Les habitudes",
              h3("Les traideurs et les transactions")
              # repartition du nombre de transactions par le volume
+
     )
   )
 )
