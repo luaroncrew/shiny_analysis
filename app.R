@@ -5,44 +5,59 @@
 # Find out more about building applications with Shiny here:
 #
 #    http://shiny.rstudio.com/
-#
+
+# Installer
+install.packages("tm")  # pour le text mining
+install.packages("SnowballC") # pour le text stemming
+install.packages("wordcloud") # générateur de word-cloud 
+install.packages("RColorBrewer") # Palettes de couleurs
+# Charger
+library("tm")
+library("SnowballC")
+library("wordcloud")
+library("RColorBrewer")
+
+
 
 library(shiny)
+library(shinydashboard)
+library(shinythemes)
+library(readr)
 
-# Define UI for application that draws a histogram
+data <- read_csv("faucet.csv")
+View(data)
+
+# Define UI for 
 ui <- fluidPage(
-
-    # Application title
-    titlePanel("Old Faithful Geyser Data"),
-
-    # Sidebar with a slider input for number of bins 
-    sidebarLayout(
-        sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
-        ),
-
-        # Show a plot of the generated distribution
-        mainPanel(
-           plotOutput("distPlot")
-        )
+  theme = shinytheme("flatly"),
+  navbarPage("Tradestats"),
+  
+  navlistPanel(
+    "Analyses",
+    tabPanel("Introduction",
+             h3("Problematique")
+             # rajouter un nuage de mot avec le champs lexical de la bourse
+    ),
+    tabPanel("Les symboles",
+             h3("L'utilisation des differentes devises sur la bourse")
+             # graphique circulaire sur le top des symboles les plus utilisÃ©s
+    ),
+    tabPanel("Les transactions",
+             h3("Le nombre de transactions")
+             #rÃ©partition du nombre de transaction par la somme en dollars
+    ),
+    tabPanel("Les habitudes",
+             h3("Les traideurs et les transactions")
+             # rÃ©partition du nombre de transactions par le volume
     )
+  )
 )
+
+#a voir si on rajoute un volet conclusion ou si on met une zone de texte dans "les habitudes"
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
-
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
-    })
+  
 }
 
 # Run the application 
