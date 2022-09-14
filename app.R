@@ -9,20 +9,18 @@
 # Installer
 install.packages("tm")  # pour le text mining
 install.packages("SnowballC") # pour le text stemming
-install.packages("wordcloud") # g�n�rateur de word-cloud 
+install.packages("wordcloud") # générateur de word-cloud 
 install.packages("RColorBrewer") # Palettes de couleurs
 # Charger
 library("tm")
 library("SnowballC")
 library("wordcloud")
 library("RColorBrewer")
-
-
-
 library(shiny)
 library(shinydashboard)
 library(shinythemes)
 library(readr)
+
 
 data <- read_csv("faucet.csv")
 View(data)
@@ -35,20 +33,22 @@ ui <- fluidPage(
   navlistPanel(
     "Analyses",
     tabPanel("Introduction",
-             h3("Problematique")
-             # rajouter un nuage de mot avec le champs lexical de la bourse
+             h3("Problematique"),
+             h4("Quelles sont les habitudes des traideurs sur la blockchain ?"),
+             tags$img(src="blockchain-image.png", height= 200, width = 600)
     ),
     tabPanel("Les symboles",
              h3("L'utilisation des differentes devises sur la bourse")
-             # graphique circulaire sur le top des symboles les plus utilisés
+             # graphique circulaire sur le top des symboles les plus utilises
     ),
     tabPanel("Les transactions",
              h3("Le nombre de transactions")
-             #répartition du nombre de transaction par la somme en dollars
+             #repartition du nombre de transaction par la somme en dollars
     ),
     tabPanel("Les habitudes",
              h3("Les traideurs et les transactions")
-             # répartition du nombre de transactions par le volume
+             # repartition du nombre de transactions par le volume
+
     )
   )
 )
