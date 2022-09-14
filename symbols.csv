@@ -1,3 +1,4 @@
+token_address, decimals, token_symbol
 token.skyward.near,18,SKYWARD
 bed4ab0019ff361d83ddeb74883dac8a70f5ea1e.factory.bridge.near,18,MRCH
 berryclub.ek.near,18,BANANA
