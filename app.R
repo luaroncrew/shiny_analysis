@@ -68,12 +68,15 @@ ui <- fluidPage(
     tabPanel("Introduction",
              h3("Problematique"),
              h4("Quelles sont les habitudes des traideurs sur la blockchain ?"),
-             tags$img(src="blockchain-image.png", height= 200, width = 600)#import d'une image
+             tags$img(src="blockchain-image.png", height= 200, width = 600)
+    ),
+    tabPanel("General infpormation",
+             h3("General information about trading volume"),
+             
     ),
     tabPanel("Les symboles",
-             h3("L'utilisation des differentes devises sur la bourse"),
-             h4(plotOutput("graph"))
-             # graphique circulaire sur le top des symboles les plus utilises
+             h3("Top assets"),
+             h4(plotOutput("most_traded_tokens"))
     ),
     tabPanel("Top traders",
              h3("The top traders by the number of transactions"),
@@ -91,9 +94,13 @@ ui <- fluidPage(
              h4(plotOutput("volume_plot")),
              selectInput(
                inputId='tokenchoice',
-               label='filter by token',
+               label='Filter by token',
                choices = c('usn', 'dai', 'aurora', 'usdt')
              )
+    ),
+    tabPanel("Transaction observer",
+        h3("Here you can see the essential information about the transaction of your choice"),
+             
     )
   )
 )
@@ -106,11 +113,30 @@ server <- function(input, output) {
   signers = data.frame(table(signers))
   signers = signers[order(signers$Freq),]
   
+  tokens = data$token_in_id
+  tokens = data.frame(table(tokens))
+  tokens = tokens[order(tokens$Freq),]
+  
+  pie_labels = levels(tail(tokens, 4)$tokens)[tail(tokens, 4)$tokens]
+  pie_labels = append(pie_labels, 'others')
+  pie_values = tail(tokens, 4)$Freq
+  pie_values = append(pie_values, sum(tokens$Freq) - sum(tail(tokens, 4)$Freq))
+  piepercent<- round(100*pie_values/sum(pie_values), 1)
+  pie_colors = c(
+    "#264563",
+    "#2a9d8f",
+    "#e9c46a",
+    "#f4a261",
+    "#e76f51"
+  )
+  
   #creation des graphiques
-  output$tri_a_plat <- renderPlot(
-    A=table(data$token_in_name),
-    pie(x = A, main = "Repartition des symboles parmi les transactions",
-    col = "turquoise2", labels = paste(rownames(A),A))
+  output$most_traded_tokens <- renderPlot(
+    pie(
+      pie_values,
+      pie_labels,
+      col=pie_colors
+      )
   )
   output$top_signers_plot <- renderPlot(
     barplot(
