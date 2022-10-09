@@ -13,6 +13,7 @@ analysis_dataframe = merge(
   all.x = TRUE
   )
 
+# rename the column
 names(analysis_dataframe)[length(names(analysis_dataframe))]= 'token_in_symbol'
 
 # join the token_symbol for token_out
@@ -24,13 +25,14 @@ analysis_dataframe = merge(
   all.x = TRUE
 )
 
+# rename the column
+names(analysis_dataframe)[length(names(analysis_dataframe))] = 'token_out_symbol'
 
-names(analysis_dataframe)[length(names(analysis_dataframe))]= 'token_out_symbol'
-
+# rename another column
 names(analysis_dataframe)[7] = 'decimals_token_in'
 analysis_dataframe[9] = NULL
 
-# making all symbols lowercase
+# making all symbols lowercase for merging
 ech = analysis_dataframe$token_in_symbol
 lower = tolower(ech)
 analysis_dataframe$token_in_symbol = lower
@@ -59,10 +61,11 @@ analysis_dataframe = merge(
   all.x = TRUE
 )
 
+# delete useless column after merge and rename one
 analysis_dataframe$token_id.x = NULL
 names(analysis_dataframe)[10] = 'token_in_id'
 
-
+# merge with prices by day
 analysis_dataframe = merge(
   x = analysis_dataframe,
   y = prices,
@@ -72,22 +75,10 @@ analysis_dataframe = merge(
 )
 
 # remove all the NULL values
-analysis_dataframe <- na.omit(analysis_dataframe) 
+analysis_dataframe = na.omit(analysis_dataframe) 
 
-# remove doubled swaps
-analysis_dataframe = unique(analysis_dataframe[c(
-  "receipt_id",
-  "token_in_name",
-  "token_in_symbol",
-  ""
-)])
+# remove doubled entries
+analysis_dataframe = unique(analysis_dataframe)
 
-analysis_dataframe$token_symbol
-
-analysis_dataframe = merge(
-  x = analysis_dataframe,
-  y = 
-)
-
-
-data = read.csv('faucet.csv')
+# calculate volumes being given all the merged information
+analysis_dataframe$volume = (analysis_dataframe$amount_in / (10 ** analysis_dataframe$decimals_token_in)) * analysis_dataframe$price_usd

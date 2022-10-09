@@ -9,8 +9,9 @@
 # Installer
 install.packages("tm")  # pour le text mining
 install.packages("SnowballC") # pour le text stemming
-install.packages("wordcloud") # générateur de word-cloud 
+install.packages("wordcloud") # g?n?rateur de word-cloud 
 install.packages("RColorBrewer") # Palettes de couleurs
+install.packages("shinydashboard")
 # Charger
 library("tm")
 library("SnowballC")
