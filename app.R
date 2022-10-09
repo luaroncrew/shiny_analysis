@@ -1,29 +1,7 @@
-# install all needed packages
-install.packages("tm")  # pour le text mining
-install.packages("SnowballC") # pour le text stemming
-install.packages("wordcloud") # g?n?rateur de word-cloud 
-install.packages("RColorBrewer") # Palettes de couleurs
-install.packages("shinydashboard")
-
-# import libraries
-library("tm")
-library("SnowballC")
-library("wordcloud")
-library("RColorBrewer")
-library(shiny)
-library(shinydashboard)
-library(shinythemes)
-library(readr)
-
-
-data <- read_csv("data/final/swap_operations.csv")
-View(data)
-
 # Define UI for 
 ui <- fluidPage(
   theme = shinytheme("flatly"),#appliquer une mise en forme
   navbarPage("Tradestats"),#donner un titre
-  
   navlistPanel(
     "Analyses",
     tabPanel("Introduction",#creation d'un bouton
@@ -53,8 +31,9 @@ ui <- fluidPage(
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
-  #creation des graphiques
+  data <- read_csv("data/final/swap_operations.csv")
   
+  #creation des graphiques
   output$tri_a_plat <- renderPlot(
     A=table(data$token_in_name),
     pie(x = A, main = "Repartition des symboles parmi les transactions",
@@ -66,11 +45,17 @@ server <- function(input, output) {
     main = "Nombre de transactions par traideur",
     col = "steelblue2", horiz = TRUE)
   )
-  output$volume <- renderPlot(
-    hist(x = data$swap_volume_usd, main = "Distribution du volume deplace par les traideurs",
-    col = "blue" , breaks = 60,labels=T, probability = TRUE, xlim = c(0, 120000))
-  )
-  
+  output$volume <- renderPlot({
+    x    <- data$volume
+    hist(
+      x,
+      breaks=5000,
+      xlim=c(0,1000),
+      main="Volumes of swap operations on REF finance",
+      xlab="Volume, $USD"
+    )
+    
+  })
 }
 
 # Run the application 
