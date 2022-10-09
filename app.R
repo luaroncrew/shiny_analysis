@@ -2,6 +2,63 @@
 ui <- fluidPage(
   theme = shinytheme("flatly"),#appliquer une mise en forme
   navbarPage("Tradestats"),#donner un titre
+  tags$style(HTML("
+      h2 {
+        font-family: 'Yusei Magic', sans-serif;
+      }
+      .row {
+        margin: 30px;
+        background-color: white;
+      }
+      .navbar {
+        margin: 30px;
+      }
+      .shiny-input-container {
+        color: #474747;
+      }
+      .wrapper{
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      }
+      
+      a{
+        display: block;
+        width: 100%;
+        height: 50px;
+        line-height: 40px;
+        font-size: 18px;
+        font-family: sans-serif;
+        text-decoration: none;
+        color: #333;
+        border: 2px solid #333;
+        position: relative;
+        transition: all .35s;
+      }
+      
+      a span{
+        position: relative;
+        z-index: 2;
+      }
+      
+      a:after{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 100%;
+        background: #ff003b;
+        transition: all .35s;
+      }
+      
+      a:hover{
+        transform: scale(1.05);
+      }
+      
+      a:hover:after{
+        width: 100%;
+      }")),
   navlistPanel(
     "Analyses",
     tabPanel("Introduction",#creation d'un bouton
