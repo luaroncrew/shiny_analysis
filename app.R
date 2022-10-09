@@ -1,14 +1,19 @@
 # Define UI for 
+
 ui <- fluidPage(
+  setSliderColor('#ee2e31', 1:20),
   theme = shinytheme("flatly"),#appliquer une mise en forme
   navbarPage("Tradestats"),#donner un titre
   tags$style(HTML("
-      h2 {
-        font-family: 'Yusei Magic', sans-serif;
-      }
       .row {
         margin: 30px;
         background-color: white;
+      }
+      h3 {
+        padding-left: 4%;
+      }
+      h4 {
+        padding-left: 4%;
       }
       .navbar {
         margin: 30px;
@@ -60,8 +65,7 @@ ui <- fluidPage(
         width: 100%;
       }")),
   navlistPanel(
-    "Analyses",
-    tabPanel("Introduction",#creation d'un bouton
+    tabPanel("Introduction",
              h3("Problematique"),
              h4("Quelles sont les habitudes des traideurs sur la blockchain ?"),
              tags$img(src="blockchain-image.png", height= 200, width = 600)#import d'une image
@@ -71,24 +75,36 @@ ui <- fluidPage(
              h4(plotOutput("graph"))
              # graphique circulaire sur le top des symboles les plus utilises
     ),
-    tabPanel("Les transactions",
-             h3("Le suivi des transactions"),
-             h4(plotOutput("graph2"))
-             #repartition du nombre de transaction par la somme en dollars
+    tabPanel("Top traders",
+             h3("The top traders by the number of transactions"),
+             h4(plotOutput("top_signers_plot")),
+             sliderInput(
+               inputId = "top",
+               label = "Top of:",
+               min = 5,
+               max = 20,
+               value = 10
+             )
     ),
-    tabPanel("Les habitudes",
-             h3("Les traideurs et les transactions"),
-             h4(plotOutput("volume"))
-             # repartition du nombre de transactions par le volume
+    tabPanel("Trading volumes",
+             h3("How are transactions distributed by the volume of a transaction"),
+             h4(plotOutput("volume_plot")),
+             selectInput(
+               inputId='tokenchoice',
+               label='filter by token',
+               choices = c('usn', 'dai', 'aurora', 'usdt')
+             )
     )
   )
 )
 
-#a voir si on rajoute un volet conclusion ou si on met une zone de texte dans "les habitudes"
-
 # Define server logic required to draw a histogram
 server <- function(input, output) {
   data <- read_csv("data/final/swap_operations.csv")
+  
+  signers = data$transaction_signer
+  signers = data.frame(table(signers))
+  signers = signers[order(signers$Freq),]
   
   #creation des graphiques
   output$tri_a_plat <- renderPlot(
@@ -96,22 +112,26 @@ server <- function(input, output) {
     pie(x = A, main = "Repartition des symboles parmi les transactions",
     col = "turquoise2", labels = paste(rownames(A),A))
   )
-  output$tri_a_plat2 <- renderPlot(
-    B=table(data$transaction_signer),
-    barplot(height = B, 
-    main = "Nombre de transactions par traideur",
-    col = "steelblue2", horiz = TRUE)
+  output$top_signers_plot <- renderPlot(
+    barplot(
+      height=tail(signers, input$top)$Freq,
+      names = tail(signers, input$top)$x,
+      xlab = "number of transactions",
+      main = "top 10 traders by number of trades",
+      col = "#1d7874",
+      horiz = TRUE
+      )
   )
-  output$volume <- renderPlot({
-    x    <- data$volume
+  output$volume_plot <- renderPlot({
+    x <- data[data$token_in_symbol == input$tokenchoice,]$volume
     hist(
       x,
       breaks=5000,
       xlim=c(0,1000),
       main="Volumes of swap operations on REF finance",
-      xlab="Volume, $USD"
+      xlab="Volume, $USD",
+      c = '#1d7874'
     )
-    
   })
 }
 
