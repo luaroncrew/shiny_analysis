@@ -1,7 +1,7 @@
-transactions = read.csv('transactions.csv')
-token_ids = read.csv('token_ids.csv')
-symbols = read.csv('symbols.csv')
-prices = read.csv('prices.csv')
+transactions = read.csv('data/raw/transactions.csv')
+token_ids = read.csv('data/raw/token_ids.csv')
+symbols = read.csv('data/raw/symbols.csv')
+prices = read.csv('data/raw/prices.csv')
 
 
 # join the token_symbol for token_in
@@ -82,3 +82,5 @@ analysis_dataframe = unique(analysis_dataframe)
 
 # calculate volumes being given all the merged information
 analysis_dataframe$volume = (analysis_dataframe$amount_in / (10 ** analysis_dataframe$decimals_token_in)) * analysis_dataframe$price_usd
+
+write.csv(analysis_dataframe,"data/final/swap_operations.csv", row.names = TRUE)
