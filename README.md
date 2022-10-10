@@ -11,6 +11,13 @@ Nous avons dÃ©cidÃ© de centrer notre projet sur l'Ã©tude de la blockchain, les t
 C'est pourquoi nous avons dÃ©cidÃ© de poser la problÃ©matique suivante Â« Quelles sont les habitudes des traders sur la blockchain ? Â» pour mieux comprendre le comportement des personnes sur la bourse et voir s'il y a un modÃ¨le particulier utilisÃ© par les traders ou des transactions phares.  
 Pour rÃ©pondre Ã  cette question, nous avons dÃ©veloppÃ© une application R Shiny basÃ©e sur des donnÃ©es extraites elles-mÃªmes de la blockchain.  
 
+## Les éléments du repository 
+
+Nous pouvons trouver dans le repository de GitHub plusieurs fichiers qui ont tous servit à la création de l'application R Shiny.  
+D'abord il y a le README qui correspond à la document technique et utilisateur pour mieux comprendre comment utiliser l'application et avoir une explication du fonctionnement et des méthodes utilisées pour sa création.   
+Il y a aussi les fichiers source qui contiennet les données utilisées pour faire les analyses graphiques et statistiques.  
+Nous avons aussi placé le code brut commenté du R Shiny avec ces modifications.  
+Ainsi qu'un document permettant de comprendre le projet, les données, le but de l'analyse avant d'ouvrir l'application Shiny.  
 
 ## L'application  
 
