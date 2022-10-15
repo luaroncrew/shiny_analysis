@@ -10,8 +10,15 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+  
 ![](https://www.cooperative.com/news/PublishingImages/fcc-spectrum-2020-getty.jpg)
 
+
+![](https://v2.cimg.co/guide/77189/186288/adobestock-477176149-1.jpg)
+  
+  
+  
+  
 # Tradestats 
 
 ## Présentation du jeu de données  
@@ -103,6 +110,37 @@ summary(data$volume)
 sd(data$volume)
 ```
 
+```{r}
+library(ggplot2)
+ggplot(data) +
+ aes(x = day) +
+ geom_bar(fill = "#112446") +
+ theme_minimal()
+```
+
+Nous pouvons comparer le nombre de transaction faites par jour avec le volume échangé pour voir si le jour influe sur le volume.  
+
+```{r}
+library(ggplot2)
+ggplot(data) +
+  aes(x = day, y = volume) +
+  geom_col(fill = "#112446") +
+  theme_minimal()
+```
+
+|   Jour   |Nb transaction|Volume |volume moyen/transaction|
+|:--------:|:--------:|:--------:|:--------:|
+|21-08-2022| | | |
+|22-08-2022| | | |
+|23-08-2022| | | |
+|24-08-2022| | | |
+|25-08-2022| | | |
+|26-08-2022| | | |
+|27-08-2022| | | |
+|28-08-2022| | | |
+|29-08-2022| | | |
+|30-08-2022| | | |
+
 ### Analyse des prix
 
 ```{r}
@@ -120,6 +158,19 @@ sd(data$amount_in)
 ## Tableau  
 
 ## Visualisation  
+
+
+
+
+
+
+```{r}
+library(ggplot2)
+ggplot(data) +
+ aes(x = day, y = token_in_id, group = day) +
+ geom_tile(size = 1.2) +
+ theme_minimal()
+```
 
 (graphiques et interprétation) avec des commentaires  
 graph de l'application et les analyses et explications  
