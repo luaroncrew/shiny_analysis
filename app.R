@@ -1,4 +1,15 @@
-# Define UI for 
+library("tm")
+library("SnowballC")
+library("wordcloud")
+library("RColorBrewer")
+library(shiny)
+library(shinydashboard)
+library(shinythemes)
+library(readr)
+library(shinyWidgets)
+
+data <- read_csv("data/final/swap_operations.csv")
+transaction_choices = data[0,"...1"]
 
 ui <- fluidPage(
   setSliderColor('#ee2e31', 1:20),
@@ -70,7 +81,7 @@ ui <- fluidPage(
              h4("Quelles sont les habitudes des traideurs sur la blockchain ?"),
              tags$img(src="blockchain-image.png", height= 200, width = 600)
     ),
-    tabPanel("General infpormation",
+    tabPanel("General information",
              h3("General information about trading volume"),
              
     ),
@@ -100,14 +111,25 @@ ui <- fluidPage(
     ),
     tabPanel("Transaction observer",
         h3("Here you can see the essential information about the transaction of your choice"),
-             
+        h4(
+        fluidRow(
+          column(12,
+                 tableOutput('transaction')
+          )
+        ),
+        selectInput(
+          inputId='transactionchoice',
+          label='Filter by transaction',
+          choices = c(
+            25487, 26690, 17148, 36046, 11545, 24934, 10194, 17958)
+        )
+        )
     )
   )
 )
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
-  data <- read_csv("data/final/swap_operations.csv")
   
   signers = data$transaction_signer
   signers = data.frame(table(signers))
@@ -159,6 +181,14 @@ server <- function(input, output) {
       c = '#1d7874'
     )
   })
+  output$transaction <- renderTable(
+    data[data$...1 == input$transactionchoice,c(
+      "token_in_symbol",
+      "token_out_symbol",
+      "day",
+      "volume",
+      "transaction_signer")],
+    bordered=TRUE)
 }
 
 # Run the application 
