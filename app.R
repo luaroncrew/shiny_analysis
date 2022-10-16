@@ -9,7 +9,8 @@ library(readr)
 library(shinyWidgets)
 
 data <- read_csv("data/final/swap_operations.csv")
-transaction_choices = data[0,"...1"]
+transaction_choices = data[,"...1"]
+day_choices = unique(data$day)
 
 ui <- fluidPage(
   setSliderColor('#ee2e31', 1:20),
@@ -81,9 +82,18 @@ ui <- fluidPage(
              h4("Quelles sont les habitudes des traideurs sur la blockchain ?"),
              tags$img(src="blockchain-image.png", height= 200, width = 600)
     ),
-    tabPanel("General information",
-             h3("General information about trading volume"),
-             
+    tabPanel("Daily summary",
+             h3("General information about trading volume during a day"),
+             fluidRow(
+               column(12,
+                      tableOutput('daily_stats')
+               )
+             ),
+             selectInput(
+               inputId='daychoice',
+               label='Filter by day',
+               choices = as.vector(day_choices)
+             )
     ),
     tabPanel("Les symboles",
              h3("Top assets"),
@@ -117,11 +127,15 @@ ui <- fluidPage(
                  tableOutput('transaction')
           )
         ),
+        fluidRow(
+          column(12,
+                 tableOutput('transaction_signer')
+          )
+        ),
         selectInput(
           inputId='transactionchoice',
           label='Filter by transaction',
-          choices = c(
-            25487, 26690, 17148, 36046, 11545, 24934, 10194, 17958)
+          choices = as.vector(transaction_choices)
         )
         )
     )
@@ -186,9 +200,24 @@ server <- function(input, output) {
       "token_in_symbol",
       "token_out_symbol",
       "day",
-      "volume",
+      "volume")],
+    bordered=TRUE)
+  output$transaction_signer <- renderTable(
+    data[data$...1 == input$transactionchoice,c(
       "transaction_signer")],
     bordered=TRUE)
+  
+  
+  output$daily_stats <- renderTable(
+    data.frame(
+      max_volume = max(data[data$day == input$daychoice,]$volume),
+      min_volume = min(data[data$day == input$daychoice,]$volume),
+      standart_deviation = sd(data[data$day == input$daychoice,]$volume),
+      median = median(data[data$day == input$daychoice,]$volume),
+      day = input$daychoice
+      ),
+    bordered=TRUE
+    )
 }
 
 # Run the application 
