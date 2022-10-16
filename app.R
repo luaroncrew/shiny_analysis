@@ -1,3 +1,4 @@
+# importing all libraries
 library("tm")
 library("SnowballC")
 library("wordcloud")
@@ -8,14 +9,17 @@ library(shinythemes)
 library(readr)
 library(shinyWidgets)
 
+# read data file, pre-define the choice vectors
 data <- read_csv("data/final/swap_operations.csv")
 transaction_choices = data[,"...1"]
 day_choices = unique(data$day)
 
 ui <- fluidPage(
+  # add some style to the page
   setSliderColor('#ee2e31', 1:20),
-  theme = shinytheme("flatly"),#appliquer une mise en forme
-  navbarPage("Tradestats"),#donner un titre
+  theme = shinytheme("flatly"),
+  navbarPage("Tradestats"),
+  # add CSS styling to the buttons
   tags$style(HTML("
       .row {
         margin: 30px;
@@ -76,10 +80,12 @@ ui <- fluidPage(
       a:hover:after{
         width: 100%;
       }")),
+  # add tab elements to the page
   navlistPanel(
+    # a simple intro with a beautiful image
     tabPanel("Introduction",
              h3("Problematique"),
-             h4("Quelles sont les habitudes des traideurs sur la blockchain ?"),
+             h4("what are the habits of traders on the blokchain ?"),
              tags$img(src="blockchain-image.png", height= 200, width = 600)
     ),
     tabPanel("Daily summary",
@@ -89,15 +95,18 @@ ui <- fluidPage(
                       tableOutput('daily_stats')
                )
              ),
+             # show all trading days for a choice
              selectInput(
                inputId='daychoice',
                label='Filter by day',
                choices = as.vector(day_choices)
              )
     ),
-    tabPanel("Les symboles",
-             h3("Top assets"),
-             h4(plotOutput("most_traded_tokens"))
+    tabPanel(
+      "Les symboles",
+      h3("Top assets"),
+      h4(plotOutput("most_traded_tokens")
+      )
     ),
     tabPanel("Top traders",
              h3("The top traders by the number of transactions"),
@@ -144,15 +153,17 @@ ui <- fluidPage(
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
-  
+  # get a vector of transaction signers ordered ascending
   signers = data$transaction_signer
   signers = data.frame(table(signers))
   signers = signers[order(signers$Freq),]
   
+  # get the most traded tokens
   tokens = data$token_in_id
   tokens = data.frame(table(tokens))
   tokens = tokens[order(tokens$Freq),]
   
+  # define pie labels, values and colours
   pie_labels = levels(tail(tokens, 4)$tokens)[tail(tokens, 4)$tokens]
   pie_labels = append(pie_labels, 'others')
   pie_values = tail(tokens, 4)$Freq
@@ -166,7 +177,7 @@ server <- function(input, output) {
     "#e76f51"
   )
   
-  #creation des graphiques
+  # plot rendering
   output$most_traded_tokens <- renderPlot(
     pie(
       pie_values,
@@ -185,6 +196,7 @@ server <- function(input, output) {
       )
   )
   output$volume_plot <- renderPlot({
+    # render the histogram about the token of choice
     x <- data[data$token_in_symbol == input$tokenchoice,]$volume
     hist(
       x,
@@ -195,6 +207,7 @@ server <- function(input, output) {
       c = '#1d7874'
     )
   })
+  # table rendering
   output$transaction <- renderTable(
     data[data$...1 == input$transactionchoice,c(
       "token_in_symbol",
@@ -207,8 +220,8 @@ server <- function(input, output) {
       "transaction_signer")],
     bordered=TRUE)
   
-  
   output$daily_stats <- renderTable(
+    # define a data frame with simple stats
     data.frame(
       max_volume = max(data[data$day == input$daychoice,]$volume),
       min_volume = min(data[data$day == input$daychoice,]$volume),
