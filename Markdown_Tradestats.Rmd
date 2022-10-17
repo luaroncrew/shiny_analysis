@@ -1,8 +1,8 @@
 ---
 title: "Markdown Tradestats"
 output:
-  word_document: default
   html_document: default
+  word_document: default
   pdf_document: default
 ---
 
@@ -10,59 +10,194 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Tradestats  
+Kirill Makarov & Jenna Prades  
+  
+
+![](https://v2.cimg.co/guide/77189/186288/adobestock-477176149-1.jpg)
+  
+  
+  
+  
+# Tradestats 
 
 ## Présentation du jeu de données  
 
 Le jeu de données provient lui même de la blockchain et a été extrait de la bourse afin que les données soient le plus fiables et proches de la réalité possibles.  
-Pour réaliser l'analyse et répondre à la problématique posée, nous disposons de plusieurs fichiers dans lesquels nous avons réalisé des jointures.  
+
+(ajouter le markdown deja existant sur la source du jeu de donnees)-> Kirill
+
+### Le MCD
+
+| Symbols        |
+|:--------------:|
+| symbol         |
+| *token_address*|
+|decimals        |
+
+| Prices      |
+|:-----------:|
+| price_usd   |
+| *token_id_* |
+|decimals     |
+|day          |
+
+| Token        |
+|:------------:|
+| *token_id*   |
+| symbol       |
+
+| Transactions     |
+|:----------------:|
+| *receipt_id*     |
+| token_in_address |
+|amount_in         |
+|day               |
+|token_out_address |
+|transaction_signer|
+
+Pour réaliser l'analyse et répondre à la problématique posée, nous disposons des 4 fichiers précédents dans lesquels nous avons réalisé des jointures.  
+
+```{r}
+data <- read.csv("C:/Users/6prad/Desktop/projet/shiny_analysis/data/final/swap_operations.csv")
+```
+### Le nom des colonnes  
+
+```{r}
+colnames(data)
+```
 
 ### Voici le résumé des données :  
 
-summary(swap_operation.csv)
-
-### Le nom des colonnes et le nombre de lignes  
-
-rownames(swap_operation.csv)
-
-lenght(swap_operation.csv)
+```{r}
+summary(data)
+```
 
 Chaque colonne correspond à une donnée :
- à quoi correspond les colonnes  
+
+•	receipt_id -> identifiant de la transaction  
+•	token_in_name ->  
+•	token_out_name ->  
+•	token_in_price -> prix proposé  
+•	token_out_price -> prix vendu  
+•	swap_volume_USD -> volume echangé  
+•	transaction_signer -> nom de la personne qui fait la transaction  
+•	exchange_name -> nom donnée à l’échange  
+•	exchange_type ->  
+•	exchange_timestamp ->  
 
 ## Le projet  
 
-Le projet Tradestats consiste en la rÃ©alisation d'une application R Shiny qui sera par la suite publiÃ©e et donc accessible sur internet via Shinyapps.io.  
-Nous avons réalisé plusieurs documents pour répondre au sujet, nous pouvons trouver sur GitHub (espace de partage de documents) un document qui explique comment Ã  été réalisé le projet, avec les spécifications techniques, le fichier brut contenant le code créant l'application Shiny, un Document R.Markdown retraÃ§ant la source de données, les informations présentes dans le jeu de données, quelques indicateurs statistiques et plusieurs graphiques présents dans l'application. Tout ceci dans l'objectif de répondre Ã  la problématique posée.
+Le projet Tradestats consiste en la realisation d'une application R Shiny qui sera par la suite publiee et donc accessible sur internet via Shinyapps.io.  
+Nous avons réalisé plusieurs documents pour répondre au sujet, nous pouvons trouver sur GitHub (espace de partage de documents) un document qui explique comment a été réalisé le projet, avec les spécifications techniques, le fichier brut contenant le code créant l'application Shiny, un Document R.Markdown retracant la source de données, les informations présentes dans le jeu de données, quelques indicateurs statistiques et plusieurs graphiques présents dans l'application. Tout ceci dans l'objectif de répondre a la problématique posée.
 
 ### La problematique  
 
-Nous avons dÃ©cidÃ© de centrer notre projet sur l'Ã©tude de la blockchain, les transactions associÃ©es Ã  ses Ã©changes et les traders concernÃ©s.  
-C'est pourquoi nous avons dÃ©cidÃ© de poser la problÃ©matique suivante Â« Quelles sont les habitudes des traders sur la blockchain ? Â» pour mieux comprendre le comportement des personnes sur la bourse et voir s'il y a un modÃ¨le particulier utilisÃ© par les traders ou des transactions phares.  
-Pour rÃ©pondre Ã  cette question, nous avons dÃ©veloppÃ© une application R Shiny basÃ©e sur des donnÃ©es extraites elles-mÃªmes de la blockchain.  
+Nous avons decide de centrer notre projet sur l'etude de la blockchain, les transactions associees a ces echanges et les traders concernes.  
+C'est pourquoi nous avons decide de poser la problematique suivante  
+Quelles sont les habitudes des traders sur la blockchain ?  
+Pour mieux comprendre le comportement des personnes sur la bourse et voir s'il y a un modele particulier utilise par les traders ou des transactions phares.  
+Pour repondre a cette question, nous avons developpe une application R Shiny basee sur des donnees extraites elles-memes de la blockchain.  
 
 ### Qu'est ce que la blockchain  
 
-![blockchain](https://www.cooperative.com/news/PublishingImages/fcc-spectrum-2020-getty.jpg)
+La blockchain permet de stocker et d’échanger de la valeur, comme des cryptomonnaies, sur internet sans intermédiaire centralisé. Une blockchain constitue une base de données qui contient l’historique de tous les échanges effectués entre ses utilisateurs depuis sa création de manière sécurisée, indestructible, impossible à effacer.  
 
-## Exploration de données  
+## Exploration des données  
 
-(stat univariées et bivariées)  
-tableau avec les moyennes, mediane, min, max, pour le volume  
-des tableaux pour le nombre de lignes dans chaque catégorie  
+### Analyse du volume
 
-## Tableau  
+```{r}
+summary(data$volume)
+sd(data$volume)
+```
 
-## Visualisation  
+```{r}
+library(ggplot2)
+ggplot(data) +
+ aes(x = day) +
+ geom_bar(fill = "#112446") +
+ theme_minimal()
+```
 
-(graphiques et interprétation) avec des commentaires  
-graph de l'application et les analyses et explications  
-conclusion avec la réponse à la problématique  
+Nous voyons que le 23 et le 26 admettent bien plus de transactions que pour les autres jours étudiés. Cela peut concevoir une certaine recurrence sur les échanges.  
 
-## Les options de bloc de code suivant sont utilisées au moins une fois (echo, eval, include, warning)  
+Nous allons comparer le nombre de transaction faites par jour avec le volume échangé pour voir si le jour influe sur le volume.  
 
-include = FALSE prevents code and results from appearing in the finished file. R Markdown still runs the code in the chunk, and the results can be used by other chunks.
-echo = FALSE prevents code, but not the results from appearing in the finished file. This is a useful way to embed figures.
-message = FALSE prevents messages that are generated by code from appearing in the finished file.
-warning = FALSE prevents warnings that are generated by code from appearing in the finished.
-fig.cap = "..." adds a caption to graphical results.
+```{r}
+library(ggplot2)
+ggplot(data) +
+  aes(x = day, y = volume) +
+  geom_col(fill = "#112446") +
+  theme_minimal()
+```
+
+|   Jour   |Nb transaction|Volume |volume moyen/transaction|
+|:--------:|:--------:|:--------:|:--------:|
+|21-08-2022| 954|520655.2265 |545.76 |
+|22-08-2022| 2508| 1137033.851|453.36 |
+|23-08-2022| 2963| 1719790.877|580.42 |
+|24-08-2022| 1986| 964743.6164|485.77 |
+|25-08-2022| 1879| 712603.0258|379.25 |
+|26-08-2022| 3050|1422342.949 |466.34 |
+|27-08-2022| 2049| 907148.4622|442.73 |
+|28-08-2022| 1455|541152.9405 |371.93 |
+|29-08-2022| 2181|1381254.213 |633.31 |
+|30-08-2022| 948| 437423.6403|461.42 |
+
+Nous pouvons voir du tableau précedent que le volume transité diffère en fonction du jour des transactions. Ainsi, le 29-08-2022 le volume moyen d'une transaction était supérieur aux autres jours étudiés, contre 371.93 le 28 soit la veille. C'est une autre remarque que l'on peut se faire pour répondre à la problématique.  
+
+### Analyse des prix
+
+```{r}
+summary(data$price_usd)
+sd(data$price_usd)
+```
+
+```{r}
+library(ggplot2)
+ggplot(data) +
+  aes(x = day, y = price_usd) +
+  geom_col(fill = "#112446") +
+  theme_minimal()
+```
+
+|   Jour   |Nb transaction|Prix |Prix moyen/transaction|
+|:--------:|:--------:|:--------:|:--------:|
+|21-08-2022| 954|1063987.538 | 1115.29|
+|22-08-2022| 2508| 2752833.845|1097.62 |
+|23-08-2022| 2963|3349371.255 |1130.40 |
+|24-08-2022| 1986|1745682.067 |878.99 |
+|25-08-2022| 1879| 664875.9235|353.85 |
+|26-08-2022| 3050|3610782.236 |1183.86 |
+|27-08-2022| 2049| 740136.7879|361.22 |
+|28-08-2022| 1455| 887732.028|610.13 |
+|29-08-2022| 2181| 2101249.302|963.43 |
+|30-08-2022| 948| 2285533.305|2410.90 |
+
+D'après les graphiques précédents et les tableaux de données, nous pouvons en analyser que les plus grands prix pour une transaction ont eut lieu le 30-08-2022, avec un prix moyen de 2410.90 pour cette journée contre 353.85 le 25-08-2022, ce qui marque une première conclusion et habitude.   
+
+### Analyse des montants  
+
+```{r}
+summary(data$amount_in)
+sd(data$amount_in)
+```
+
+Nous admettons une grande différence entre le montant minimum et maximum échangé. Cela nous montre et nous fait déduire que le montant varie beaucoup ne me peut être considéré comme une habitude réelle de la part des traders.  
+
+### Analyse des traders  
+
+```{r}
+library(ggplot2)
+ggplot(data) +
+ aes(x = day, y = token_in_id, group = day) +
+ geom_tile(size = 1.2) +
+ theme_minimal()
+```
+
+Ce graphique nous montre qu'un grand nombre de traders effectuent des échanges tous les jours, ou du moins sur la période étudiée. Ils sont donc actifs régulièrement voire quotidiennement sur la blockchain.  
+
+## Conclusion  
+
+Le projet Tradestats avait pour but de savoir si les traders admettaient des habitudes lors de leurs transactions sur la blockchain. Pour répondre à cette problématique nous avons réalisé des analyses à partir de multiples graphiques et tableaux de données. Aussi, nous avons mis au point un application permettant de réaliser ses propres analyses à partir de plusieurs visuels que l'on peut filtrer selon notre volonté.  
+Suite à cela, nous avons pu emettre quelques hypothèse d'habitudes sur la blockchain, même si ce secteur est très variable et dépend de beaucoup de facteurs instables. Nous avons pu voir que les traders réalisaient en majorité des transactions tous les jours, mais que ce facteur influait sur le volume transité, les prix et montants des opérations. Certaines devises sont privilégiées pour simplifier ces échanges et les rendre universels.  
