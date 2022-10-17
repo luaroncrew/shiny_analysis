@@ -8,6 +8,7 @@ library(shinydashboard)
 library(shinythemes)
 library(readr)
 library(shinyWidgets)
+library(ggplot2)
 
 # read data file, pre-define the choice vectors
 data <- read_csv("data/final/swap_operations.csv")
@@ -126,7 +127,10 @@ ui <- fluidPage(
                inputId='tokenchoice',
                label='Filter by token',
                choices = c('usn', 'dai', 'aurora', 'usdt')
-             )
+             ),
+             
+             # a button to download the plot
+             downloadButton('download_volume_plot')
     ),
     tabPanel("Transaction observer",
         h3("Here you can see the essential information about the transaction of your choice"),
@@ -178,6 +182,9 @@ server <- function(input, output) {
   )
   
   # plot rendering
+  # pie plot save
+  # https://stackoverflow.com/questions/14810409/how-to-save-plots-that-are-made-in-a-shiny-app
+  # https://r-graph-gallery.com/piechart-ggplot2.html
   output$most_traded_tokens <- renderPlot(
     pie(
       pie_values,
@@ -207,6 +214,7 @@ server <- function(input, output) {
       c = '#1d7874'
     )
   })
+  
   # table rendering
   output$transaction <- renderTable(
     data[data$...1 == input$transactionchoice,c(
