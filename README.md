@@ -118,36 +118,39 @@ request on api: ``` /coins/list ```
 
 ## Le projet  
 
-Le projet Tradestats consiste en la rÃ©alisation d'une application R Shiny qui sera par la suite publiÃ©e et donc accessible sur internet via Shinyapps.io.  
-Nous avons rÃ©alisÃ© plusieurs documents pour rÃ©pondre au sujet, nous pouvons trouver sur GitHub (espace de partage de documents) un document qui explique comment Ã  Ã©tÃ© rÃ©alisÃ© le projet, avec les spÃ©cifications techniques, le fichier brut contenant le code crÃ©ant l'application Shiny, un Document R.Markdown retraÃ§ant la source de donnÃ©es, les informations prÃ©sentes dans le jeu de donnÃ©es, quelques indicateurs statistiques et plusieurs graphiques prÃ©sents dans l'application. Tout ceci dans l'objectif de rÃ©pondre Ã  la problÃ©matique posÃ©e.  
+Le projet Tradestats consiste en la realisation d'une application R Shiny qui sera par la suite publiee et donc accessible sur internet via Shinyapps.io.  
+Nous avons realise plusieurs documents pour repondre au sujet, nous pouvons trouver sur GitHub (espace de partage de documents) un document qui explique comment a ete realise le projet, avec les specifications techniques, le fichier brut contenant le code creant l'application Shiny, un Document R.Markdown retracant la source de donnees, les informations presentes dans le jeu de donnees, quelques indicateurs statistiques et plusieurs graphiques presents dans l'application. Tout ceci dans l'objectif de repondre a la problematique posee.  
 
-## La problÃ©matique  
+## La problematique  
 
-Nous avons dÃ©cidÃ© de centrer notre projet sur l'Ã©tude de la blockchain, les transactions associÃ©es Ã  ses Ã©changes et les traders concernÃ©s.  
-C'est pourquoi nous avons dÃ©cidÃ© de poser la problÃ©matique suivante Â« Quelles sont les habitudes des traders sur la blockchain ? Â» pour mieux comprendre le comportement des personnes sur la bourse et voir s'il y a un modÃ¨le particulier utilisÃ© par les traders ou des transactions phares.  
-Pour rÃ©pondre Ã  cette question, nous avons dÃ©veloppÃ© une application R Shiny basÃ©e sur des donnÃ©es extraites elles-mÃªmes de la blockchain.  
+Nous avons decide de centrer notre projet sur l'etude de la blockchain, les transactions associees a ses echanges et les traders concernes.  
+C'est pourquoi nous avons decide de poser la problematique suivante : Quelles sont les habitudes des traders sur la blockchain ?  
+Pour mieux comprendre le comportement des personnes sur la bourse et voir s'il y a un modele particulier utilise par les traders ou des transactions phares.  
+Pour repondre a cette question, nous avons developpe une application R Shiny basee sur des donnees extraites elles-memes de la blockchain.  
 
-## Les éléments du repository 
+## Les ements du repository 
 
-Nous pouvons trouver dans le repository de GitHub plusieurs fichiers qui ont tous servit à la création de l'application R Shiny.  
-D'abord il y a le README qui correspond à la document technique et utilisateur pour mieux comprendre comment utiliser l'application et avoir une explication du fonctionnement et des méthodes utilisées pour sa création.   
-Il y a aussi les fichiers source qui contiennet les données utilisées pour faire les analyses graphiques et statistiques.  
-Nous avons aussi placé le code brut commenté du R Shiny avec ces modifications.  
-Ainsi qu'un document permettant de comprendre le projet, les données, le but de l'analyse avant d'ouvrir l'application Shiny.  
+Nous pouvons trouver dans le repository de GitHub plusieurs fichiers qui ont tous servit a la creation de l'application R Shiny.  
+D'abord il y a le README qui correspond a la documentation technique et utilisateur pour mieux comprendre comment utiliser l'application et avoir une explication du fonctionnement et des methodes utilisees pour sa creation.   
+Il y a aussi les fichiers source qui contiennet les donnees utilisees pour faire les analyses graphiques et statistiques.  
+Nous avons aussi place le code brut commente du R Shiny avec ses modifications.  
+Ainsi qu'un document permettant de comprendre le projet, les donnees, le but de l'analyse avant d'ouvrir l'application Shiny.  
 
 ## L'application  
 
-Notre application se prÃ©sente sous la forme de plusieurs volets se concentrant chacun sur un thÃ¨me particulier, ce qui nous permettra aprÃ¨s de fournir des conclusions et rÃ©pondre Ã  la problÃ©matique.  
-Nous pouvons y voir le nom du projet en haut Ã  gauche, puis dans un premier temps un rappel de la problÃ©matique. Ensuite, sur la gauche, nous trouvons la fenÃªtre qui permettra de naviguer entre les diffÃ©rents volets qui contiennent les graphiques et analyses. Trois volets sont prÃ©sents, un focus sur les symboles utilisÃ©s, les transactions rÃ©alisÃ©es, les habitudes des traders.  
+Notre application se presente sous la forme de plusieurs volets se concentrant chacun sur un theme particulier, ce qui nous permettra apres de fournir des conclusions et repondre a la problematique.  
+Nous pouvons y voir le nom du projet en haut a gauche, puis dans un premier temps un rappel de la problematique. Ensuite, sur la gauche, nous trouvons la fenetre qui permettra de naviguer entre les differents volets qui contiennent les graphiques et analyses. Trois volets sont presents, un focus sur les analyses journali�res, sur les symboles, sur les transactions realisees avec leur volume, les habitudes des traders.  
 
 ## L'utilisation de Tradestats  
 
-Pour bien utiliser l'application, il faut d'abord prendre connaissance de la problÃ©matique, puis suivre l'ordre des diffÃ©rents volets en cliquant dessus pour voir les analyses, les graphiques et tableaux prÃ©sents dans chacun d'entre eux. Les filtres prÃ©sents servent Ã  voir en dÃ©tails les donnÃ©es afin d'axer l'analyse sur une dimension particuliÃ¨re.  
+Pour bien utiliser l'application, il faut d'abord prendre connaissance de la problematique, puis suivre l'ordre des differents volets en cliquant dessus pour voir les analyses, les graphiques et tableaux presents dans chacun d'entre eux. Les filtres presents servent a voir en details les donnees afin d'axer l'analyse sur une dimension particuliere.  
 
-## Les conclusions Ã  faire ressortir  
+## Les conclusions a faire ressortir  
 
-Dans les diffÃ©rents volets, les graphiques et statistiques prÃ©sents apportent des rÃ©ponses en lien avec la problÃ©matique pour finaliser la rÃ©ponse attendue sur les habitudes des traders sur la blockchain.  
-Le focus sur les symboles utilisÃ©s nous montre que pour une majoritÃ© des transactions, le mÃªme symbole est utilisÃ©, ainsi, nous pouvons identifier une premiÃ¨re habitude des traders et un choix distinct entre les diffÃ©rents symboles.   
-Le focus sur les transactions rÃ©alisÃ©es nous montre que  
-Le focus sur les habitudes des traders illustre le fait que beaucoup de transactions reprÃ©sentent un volume entre 0 et 200 dollars. Pour une transaction, l'argent dÃ©placÃ© est de faible volume, trÃ¨s peu sont supÃ©rieures Ã  900 dollars.   
+Dans les differents volets, les graphiques et statistiques presents apportent des reponses en lien avec la problematique pour finaliser la reponse attendue sur les habitudes des traders sur la blockchain.  
+Le focus sur les symboles utilises nous montre que pour une majorite des transactions, le meme symbole est utilise, ainsi, nous pouvons identifier une premiere habitude des traders et un choix distinct entre les differents symboles.   
+Le focus sur les transactions realisees nous montre que chacune est differente que ce soit par rapport au trader concerne, au volume, au prix, il n'y en a pas deux identiques.  
+Le focus sur les habitudes des traders illustre le fait que beaucoup de transactions representent un volume entre 0 et 200 dollars. Pour une transaction, l'argent deplace est de faible volume, tres peu sont superieures a 900 dollars.   
+
+Ainsi nous pouvons en conclure que chaque transaction est differente, il n'y a pas forcement de schemas qui se repete, mais des tendances s'observent tout de meme, ou du moins sur le jeu de donnees etudie.
 
