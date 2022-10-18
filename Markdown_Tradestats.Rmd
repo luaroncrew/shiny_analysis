@@ -24,7 +24,393 @@ Kirill Makarov & Jenna Prades
 
 Le jeu de données provient lui même de la blockchain et a été extrait de la bourse afin que les données soient le plus fiables et proches de la réalité possibles.  
 
-(ajouter le markdown deja existant sur la source du jeu de donnees)-> Kirill
+# Preparation:
+
+## PART 1 - Where to search for variables and values on the blockchain?
+
+The first and maybe the hardest thing to do is to understand, what happens on the blockchain when you swap 
+your tokens on different exchanges. The easiest way is to execute some swaps and just look
+inside the transactions. Let's start with [REF finance](https://app.ref.finance/).
+
+### Each transaction has its execution plan. 
+There are some examples:
+
+
+- swapping 1 REF token for USDC:
+[example 1](https://explorer.mainnet.near.org/transactions/BcR6ez3uYh54poqZwLMMgVKcqzMrz7Kn1C455dAiwVno)
+
+- swapping 0.1234 USDT for Skyward:
+[example 2](https://explorer.mainnet.near.org/transactions/F95qeUybVWyYS6WgjuDvyJF1kotYS2V5SThV5JJWui94)
+
+- swapping 0.1 NEAR for DAI:
+[example 3](https://explorer.mainnet.near.org/transactions/F9g7zrJj2agu5PsVdabpYqka57oFawV9JXSi5pvtv72C)
+
+#### Let me translate to you what's going on here.
+
+As we can see the whole execution is divided by small parts called "receipts", like this one (from the first example):
+
+![](img/receipt.png)
+
+For each receipt like this we have the information about execution block, burned gas etc., but what's really
+important for our case in this transaction is:
+- contract name
+- method name
+- arguments:
+  - receiver id
+  - amount
+
+Despite the swap is executed using multiple pools and difficult routing we can still extract all needed data from the 
+transaction.
+
+Each time we do a swap on this platform, we can find the following receipt in the execution plan:
+
+![](img/transaction/receipt.png)
+
+So, from this receipt we can find the information we need (underlined):
+- operation name
+- DEX name (contract name)
+- amount_in
+- token_in (from args.msg)
+- token_out (from args.msg)
+
+To summarize, looking for the receipts like this we can make sure this is a swap operation with a certain volume on
+a specific platform. Great! let's query the blockchain for the receipts we need!
+
+
+## PART 2: Querying the blockchain.
+
+Ok, we need to get all the receipts with a specific structure.
+
+Instead of searching for these receipts on the blockchain directly, we can use a
+centralized indexer (data collector for the blockchain)
+to extract it.
+To perform this research I had to use the NEAR mainnet database (open to use, credentials are inside):
+https://github.com/near/near-indexer-for-explorer
+
+## the database structure:
+
+![img.png](img/structure.png)
+
+What I am searching for is in action_receipt_actions table of this database.
+
+Let's query on last 1000 entries of this table: 
+
+```sql
+select * from action_receipt_actions limit 1000;
+```
+
+output: 
+
+![](img/query_example.png)
+
+
+What can we do with all this data? We can take **all** the receipts of the blockchain (we can explore ALL OF THEM),
+then filter them like: 
+- receipt_receiver_account_id == v2.ref-finance.near
+- called method == ft_on_transfer
+- action_kind == FUNCTION_CALL (to get only smart contract method calls)
+
+We can apply some filters in the SQL directly
+
+Let's query the database to get some smart contract calls, convert it to CSV and proceed to the data filtering in Python.
+
+```postgresql
+select receipt_id, args, receipt_receiver_account_id, receipt_included_in_block_timestamp
+from action_receipt_actions
+where action_kind = 'FUNCTION_CALL' and
+receipt_receiver_account_id = 'v2.ref-finance.near'
+limit 10000
+```
+
+Let's then filter the entries by the method name and check what's inside:
+
+```Python
+import csv
+import json
+
+
+datafile = open('query-10000.csv', 'r')
+reader = csv.reader(datafile)
+headers = next(reader)
+
+ref_swaps = []
+
+for raw in reader:
+    json_args = raw[1]
+    args = json.loads(json_args)
+    method_name = args['method_name']
+    if method_name == 'ft_on_transfer':
+        ref_swaps.append(raw)
+
+[print(swap) for swap in ref_swaps]
+```
+
+```Python
+# part of the output:
+['WQ5cPKRbW9unxVgFtLni4pdah91zz7TATcAtqrahHP3', '{"gas": 150000000000000, "deposit": "0", "args_json": {"msg": "{\\\\\\"force\\\\\\":0,\\\\\\"actions\\\\\\":[{\\\\\\"pool_id\\\...
+['4Kp1YLPne5Ng8nQ3HDZRyEDyzSuw1SXZZTL2LyVBWTzc', '{"gas": 150000000000000, "deposit": "0", "args_json": {"msg": "{\\\\\\"force\\\\\\":0,\\\\\\"actions\\\\\\":[{\\\\\\"pool_id\\...
+['44aV32BMt2MMwAueEd2e1QaXcz2FxV3TmtR3EYri49qW', '{"gas": 220000000000000, "deposit": "0", "args_json": {"msg": "{\\\\\\"referral_id\\\\\\":\\\\\\"skyward-ref.near\\\\\\",\\\\\...
+['5spKFSJqmu3srs99N7CoQvqoGtAXcr4WDwaX9MgpRm8v', '{"gas": 70000000000000, "deposit": "0", "args_json": {"msg": "", "amount": "28437322357073520000", "sender_id": "eypo.near"}, ...
+```
+
+As you can see, we have different messages in arguments with the same method call. From time to time there 
+is no message in the args. Let's check what is happening in the explorer for these receipts:
+
+- when there is no message, this is the deposit to the platform (no tokens swapped) 
+[transaction](https://explorer.mainnet.near.org/transactions/DDfhGh2MwkHBLBqCGDcc3AUqqZuSp7YnKP1gj9eKdvQ9#5spKFSJqmu3srs99N7CoQvqoGtAXcr4WDwaX9MgpRm8v)
+- when there is a message, it's a swap
+[transaction](https://explorer.mainnet.near.org/transactions/235vZat262EeqBEPPFW5q32YLHxJBLLxWAdPGTZD1LJT#44aV32BMt2MMwAueEd2e1QaXcz2FxV3TmtR3EYri49qW)
+
+We can prove it by looking inside their smart contracts' code:
+
+https://github.com/ref-finance/ref-contracts/blob/c580d8742d80033a630a393180163ab70f9f3c94/ref-exchange/src/token_receiver.rs
+
+here in ft_on_transfer declaration you can find:
+```Rust
+#[near_bindgen]
+impl FungibleTokenReceiver for Contract {
+    #[allow(unreachable_code)]
+    fn ft_on_transfer(
+        ...
+        if msg.is_empty() {
+            // Simple deposit.
+            self.internal_deposit(sender_id.as_ref(), &token_in, amount.into());
+            PromiseOrValue::Value(U128(0))
+        } else {
+            // instant swap
+            let message =
+                serde_json::from_str::<TokenReceiverMessage>(&msg).expect(ERR28_WRONG_MSG_FORMAT);
+            ...
+            }
+        }
+    }
+}
+```
+
+So, we're sure that these method calls with a message are definitely swap operations.
+
+Let's query more receipts I limited the query to 100K entries, filter them by argument.msg and proceed
+to the next data transformation. It would be cool to use a notebook (Jupyter or google collab), but I will
+use classic python files because I'm more used to work like this.
+
+So, the final version of the extraction file looks like this
+
+```Python
+import csv
+import json
+import datetime
+
+# opening files for reading and writing
+datafile = open('query-100k.csv', 'r')
+export = open('ref-swaps.csv', 'w')
+
+# taking headers from the initial file and copying them to the export file
+reader = csv.reader(datafile)
+writer = csv.writer(export)
+headers = next(reader)
+writer.writerow(headers)
+
+
+ref_swaps = []
+
+# checking if a receipt has the attributes of a swap on REF. If it's the case, adding it to the export
+for raw in reader:
+    json_args = raw[1]
+    args = json.loads(json_args)
+    method_name = args['method_name']
+    msg = args['args_json'].get('msg')
+    if method_name != 'ft_on_transfer':
+        continue
+    if not msg:
+        continue
+    writer.writerow(raw)
+    ref_swaps.append(raw)
+
+
+datafile.close()
+export.close()
+
+ts = datetime.datetime.fromtimestamp(float(ref_swaps[0][3][:10]))
+te = datetime.datetime.fromtimestamp(float(ref_swaps[-1][3][:10]))
+
+print(f"{len(ref_swaps)} swaps found for the last {abs(te-ts)}")
+```
+
+Output:
+
+```
+21093 swaps found for the last 8 days, 20:55:02
+```
+
+Ok, 21K entries collected during a week is enough for the analysis, let's make some transformations to this data
+
+I want to create a kind of database with these variables:
+- receipt_id
+- token_in_name
+- token_out_name
+- swap_volume_usd
+- transaction_signer (user who executed the swap)
+- exchange_name
+- exchange_type
+- exchange_timestamp
+
+
+
+let's do it in Python as well:
+
+Firstly, we need a database containing token prices in USD at a special timestamp,
+so we could compare different swap operations in volume.
+
+The amount_in is given with different decimals e.g.
+
+```
+1000000000000000000 = 1 NEAR
+1000000 = 1 USN
+```
+
+
+meaning that every time we want to use the amount_in, we have to divide it by token's number of decimals.
+In order to get the token's price we will use the API of coingecko: [reference](https://www.coingecko.com/en/api/documentation),
+but to make requests on its endpoints, we need a token id on coingecko, while we only have the addresses 
+
+
+Let's do a small plan of the token data transformation:
+- get all the token_in addresses from swaps
+- with the NEAR API, get their decimals and symbols
+- with their symbols, get their id on coingecko
+- get all the days mentioned in swaps (from the timestamp)
+- get the token prices for each day
+- export in csv containing
+  - USD price for one token
+  - token id on Coingecko
+  - token address on NEAR blockchain
+  - number of decimals
+  - day
+
+```Python
+import requests
+import json
+import csv
+import datetime
+import time
+
+# creating a new file for export
+export_file = open('tokens-prices.csv', 'w')
+tokens_prices = csv.writer(export_file)
+
+
+def dict_from(message: str) -> dict:
+    """
+    :param message:
+    :return: a dict generated from the str-formatted message from the transaction
+    """
+    message = message.replace(r'\"', '"')
+    return json.loads(message)
+
+
+def token_in_address_from_message(message: dict):
+    # to get the token_in address, we have to look inside the FIRST action
+    action = message['actions'][0]
+    token_in_address = action['token_in']
+    return token_in_address
+
+
+receipts = open('ref-swaps.csv', 'r')
+swap_receipts = csv.reader(receipts)
+headers = next(swap_receipts)
+
+unique_days = set()
+unique_token_addresses = set()
+
+# from each swap-receipt, we extract the date of the transaction and the data about the token in
+for receipt in swap_receipts:
+    args = json.loads(receipt[1])
+    msg = dict_from(args['args_json']['msg'])
+    token_in = token_in_address_from_message(msg)
+    timestamp = receipt[-1]
+    day = datetime.datetime.fromtimestamp(float(timestamp[:10])).date()
+    unique_days.add(day.strftime('%d-%m-%y'))
+    unique_token_addresses.add(token_in)
+
+
+# get all tokens with data available on Coingecko
+coin_list = requests.get('https://api.coingecko.com/api/v3/coins/list').json()
+
+
+# requesting the data from ref finance api
+# that will allow to join the token address, its symbol and the number of decimals
+near_coins = requests.get('https://api.stats.ref.finance/api/ft').json()
+
+token_data = []
+# joining the token address, number of decimals, its id on Coingecko if the token is present there
+for address in unique_token_addresses:
+    token_symbol = None
+    token_decimals = None
+    token_id = None
+    for coin in near_coins:
+        if coin['token_account_id'] == address:
+            token_symbol = coin['symbol']
+            token_decimals = coin['decimals']
+    for available_coin in coin_list:
+        if available_coin['symbol'].lower() == token_symbol.lower():
+            token_id = available_coin['id']
+
+    if token_symbol is None or token_id is None or token_decimals is None:
+        continue
+
+    token_data.append({
+        'id': token_id,
+        'address': address,
+        'decimals': token_decimals
+    })
+
+# variable names we are going to have in the export
+export_headers = [
+    'price_usd',
+    'token_address',
+    'token_id_coingecko',
+    'decimals',
+    'day'
+]
+
+tokens_prices.writerow(export_headers)
+
+# requesting the Coingecko api to get the price data for each token for each day
+# time.sleep() to avoid exceeding the api limits
+for token in token_data:
+    for day in unique_days:
+        day = day.replace('-22', '-2022')
+        time.sleep(2)
+        history = requests.get(
+            f'https://api.coingecko.com/api/v3/coins/{token["id"]}/history?date={day}'
+        ).json()
+        # if we get all the data we need from the request, adding the token data to export
+        if history.get('market_data'):
+            market_data = history['market_data']
+            if market_data.get('current_price'):
+                current_price = market_data['current_price']
+                if current_price.get('usd'):
+                    usd_price = current_price['usd']
+                    row = [
+                        usd_price,
+                        token["address"],
+                        token["id"],
+                        token["decimals"],
+                        day
+                    ]
+                    tokens_prices.writerow(row)
+
+export_file.close()
+receipts.close()
+```
+It took a while for the code to be completely executed. 
+In the output we have a csv with the rows like: 
+```
+4.230179413175076,wrap.near,wrapped-near,24,22-08-2022
+3.9259317414571497,wrap.near,wrapped-near,24,28-08-2022
+3.926304977252688,wrap.near,wrapped-near,24,27-08-2022
+```
+
 
 ### Le MCD
 
