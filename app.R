@@ -10,6 +10,8 @@ library(readr)
 library(shinyWidgets)
 library(ggplot2)
 
+# connect sqllite db
+
 # read data file, pre-define the choice vectors
 data <- read_csv("data/final/swap_operations.csv")
 transaction_choices = data[,"...1"]
@@ -106,7 +108,9 @@ ui <- fluidPage(
     tabPanel(
       "Les symboles",
       h3("Top assets"),
-      h4(plotOutput("most_traded_tokens")
+      h4(plotOutput("most_traded_tokens"),
+         # a button to download the plot
+         downloadButton('download_pie_chart')
       )
     ),
     tabPanel("Top traders",
@@ -127,10 +131,7 @@ ui <- fluidPage(
                inputId='tokenchoice',
                label='Filter by token',
                choices = c('usn', 'dai', 'aurora', 'usdt')
-             ),
-             
-             # a button to download the plot
-             downloadButton('download_volume_plot')
+             )
     ),
     tabPanel("Transaction observer",
         h3("Here you can see the essential information about the transaction of your choice"),
@@ -185,13 +186,27 @@ server <- function(input, output) {
   # pie plot save
   # https://stackoverflow.com/questions/14810409/how-to-save-plots-that-are-made-in-a-shiny-app
   # https://r-graph-gallery.com/piechart-ggplot2.html
+  pie_data = data.frame(
+    labels=pie_labels,
+    values=pie_values
+  ) 
+  pie_plot_for_download = ggplot(pie_data, aes(x="", y=values, fill=labels))+
+    geom_bar(width = 1, stat = "identity")+
+    coord_polar("y", start=0)
+  
   output$most_traded_tokens <- renderPlot(
-    pie(
-      pie_values,
-      pie_labels,
-      col=pie_colors
-      )
+    pie_plot_for_download
   )
+  output$download_pie_chart = downloadHandler(
+    filename = 'test.png',
+    content = function(file) {
+      device <- function(..., width, height) {
+        grDevices::png(..., width = width, height = height,
+                       res = 300, units = "in")
+      }
+      ggsave(file, plot = pie_plot_for_download, device = device)
+    })
+  
   output$top_signers_plot <- renderPlot(
     barplot(
       height=tail(signers, input$top)$Freq,
