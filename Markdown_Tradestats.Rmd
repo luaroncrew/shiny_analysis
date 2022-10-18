@@ -49,7 +49,7 @@ There are some examples:
 
 As we can see the whole execution is divided by small parts called "receipts", like this one (from the first example):
 
-![](img/receipt.png)
+![](www/receipt.png)
 
 For each receipt like this we have the information about execution block, burned gas etc., but what's really
 important for our case in this transaction is:
@@ -64,7 +64,7 @@ transaction.
 
 Each time we do a swap on this platform, we can find the following receipt in the execution plan:
 
-![](img/transaction/receipt.png)
+![](www/transaction/receipt.png)
 
 So, from this receipt we can find the information we need (underlined):
 - operation name
@@ -89,7 +89,7 @@ https://github.com/near/near-indexer-for-explorer
 
 ## the database structure:
 
-![img.png](img/structure.png)
+![img.png](www/structure.png)
 
 What I am searching for is in action_receipt_actions table of this database.
 
@@ -101,7 +101,7 @@ select * from action_receipt_actions limit 1000;
 
 output: 
 
-![](img/query_example.png)
+![](www/query_example.png)
 
 
 What can we do with all this data? We can take **all** the receipts of the blockchain (we can explore ALL OF THEM),
@@ -460,16 +460,16 @@ summary(data)
 
 Chaque colonne correspond à une donnée :
 
-•	receipt_id -> identifiant de la transaction  
-•	token_in_name ->  
-•	token_out_name ->  
-•	token_in_price -> prix proposé  
-•	token_out_price -> prix vendu  
-•	swap_volume_USD -> volume echangé  
-•	transaction_signer -> nom de la personne qui fait la transaction  
-•	exchange_name -> nom donnée à l’échange  
-•	exchange_type ->  
-•	exchange_timestamp ->  
+•	receipt_id -> id de receipt (action dans de transaction)  
+•	token_in_name -> nom du token qu'on vend
+•	token_out_name ->  nom du token qu'on achete
+•	token_in_price -> prix d'un token de vente
+•	token_out_price -> prix d'un token d'achat
+•	swap_volume_USD -> volume echangé en USD 
+•	transaction_signer -> nom de la personne qui a signé la transaction  
+•	exchange_name -> nom du plateforme d'echange
+•	exchange_type ->  type du plateforme d'echange
+•	exchange_timestamp -> moment d'execution de la transaction
 
 ## Le projet  
 
