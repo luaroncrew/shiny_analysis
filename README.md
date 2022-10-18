@@ -128,13 +128,17 @@ C'est pourquoi nous avons decide de poser la problematique suivante : Quelles so
 Pour mieux comprendre le comportement des personnes sur la bourse et voir s'il y a un modele particulier utilise par les traders ou des transactions phares.  
 Pour repondre a cette question, nous avons developpe une application R Shiny basee sur des donnees extraites elles-memes de la blockchain.  
 
-## Les ements du repository 
+## Les elements du repository 
 
 Nous pouvons trouver dans le repository de GitHub plusieurs fichiers qui ont tous servit a la creation de l'application R Shiny.  
 D'abord il y a le README qui correspond a la documentation technique et utilisateur pour mieux comprendre comment utiliser l'application et avoir une explication du fonctionnement et des methodes utilisees pour sa creation.   
 Il y a aussi les fichiers source qui contiennet les donnees utilisees pour faire les analyses graphiques et statistiques.  
 Nous avons aussi place le code brut commente du R Shiny avec ses modifications.  
 Ainsi qu'un document permettant de comprendre le projet, les donnees, le but de l'analyse avant d'ouvrir l'application Shiny.  
+
+## La connexion a la base de donnees
+
+Afin de connecter l'application R Shiny a une base de donnees, nous avons importe nos donnees CSV dans un systeme de gestion de base de donnees. Nous avons choisi SQLite pour realise cette partie. Une fois la base creee, nous l'avons inseree dans le code de l'application au sein d'une boucle if. Ainsi, comme la base de donnees est presente en local, il est impossible d'ouvrir l'application si la personne ne possede pas la base dans un server cloud. La boucle if permet de tester cette possibilite et de l'inclure ou non dans le code. Si aucune base correspondante n'est trouvee, l'application se connectera au fichier CSV presents dans le dossier data/final de GitHub.
 
 ## L'application  
 
