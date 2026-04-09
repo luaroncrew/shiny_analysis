@@ -199,7 +199,7 @@ ui <- fluidPage(
         transform: rotate(45deg);
       }
 
-      .cat-bubble .shiny-text-output {
+      .cat-bubble span {
         white-space: normal;
         display: block;
         line-height: 1.25;
@@ -347,30 +347,44 @@ ui <- fluidPage(
     class = "cat-overlay",
     tags$div(
       class = "cat-track",
-      tags$div(class = "cat-bubble", textOutput("cat_joke")),
-      tags$div(class = "cat-sprite")
+      tags$div(
+        id = "cat-joke-bubble",
+        class = "cat-bubble",
+        tags$span(id = "cat-joke-text")
+      ),
+      tags$div(class = "cat-sprite"),
+      tags$script(HTML("
+        (function() {
+          var jokes = [
+            'Why do programmers hate nature? Too many bugs.',
+            'A SQL query walks into a bar and asks for two tables.',
+            'There are only 10 kinds of people: those who understand binary and those who don\\'t.',
+            'Why did the developer go broke? Because he used up all his cache.',
+            'Debugging: being the detective in a crime movie where you are also the murderer.',
+            'How many programmers does it take to change a light bulb? None, that\\'s a hardware problem.'
+          ];
+          var bubble = document.getElementById('cat-joke-bubble');
+          var text = document.getElementById('cat-joke-text');
+
+          if (!bubble || !text) {
+            return;
+          }
+
+          function showJoke() {
+            text.textContent = jokes[Math.floor(Math.random() * jokes.length)];
+          }
+
+          showJoke();
+          window.setInterval(showJoke, 7000);
+        })();
+      "))
     )
   )
 )
 )
 
 # Define server logic required to draw a histogram
-server <- function(input, output, session) {
-  cat_jokes <- c(
-    "Why do programmers hate nature? Too many bugs.",
-    "A SQL query walks into a bar and asks for two tables.",
-    "There are only 10 kinds of people: those who understand binary and those who don't.",
-    "Why did the developer go broke? Because he used up all his cache.",
-    "Debugging: being the detective in a crime movie where you are also the murderer.",
-    "How many programmers does it take to change a light bulb? None, that's a hardware problem."
-  )
-
-  cat_tick <- reactiveTimer(7000, session)
-  output$cat_joke <- renderText({
-    cat_tick()
-    sample(cat_jokes, 1)
-  })
-
+server <- function(input, output) {
   # get a vector of transaction signers ordered ascending
   signers = data$transaction_signer
   signers = data.frame(table(signers))
