@@ -46,6 +46,196 @@ ui <- fluidPage(
       left: 50%;
       transform: translate(-50%, -50%);
       }
+
+      .cat-overlay {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        z-index: 9999;
+        pointer-events: none;
+        width: 260px;
+        height: 180px;
+      }
+
+      .cat-track {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        width: 170px;
+        height: 110px;
+        animation: cat-walk 7s ease-in-out infinite alternate;
+        transform-origin: bottom center;
+      }
+
+      .cat-sprite {
+        position: absolute;
+        right: 42px;
+        bottom: 10px;
+        width: 10px;
+        height: 10px;
+        background: #f4a259;
+        border-radius: 2px;
+        box-shadow:
+          10px 0 0 0 #f4a259,
+          20px 0 0 0 #f4a259,
+          30px 0 0 0 #f4a259,
+          40px 0 0 0 #f4a259,
+          50px 0 0 0 #f4a259,
+          60px 0 0 0 #f4a259,
+          70px 0 0 0 #f4a259,
+          0 10px 0 0 #f4a259,
+          10px 10px 0 0 #f4a259,
+          20px 10px 0 0 #f4a259,
+          30px 10px 0 0 #f4a259,
+          40px 10px 0 0 #f4a259,
+          50px 10px 0 0 #f4a259,
+          60px 10px 0 0 #f4a259,
+          70px 10px 0 0 #f4a259,
+          80px 10px 0 0 #f4a259,
+          90px 10px 0 0 #f4a259,
+          10px 20px 0 0 #f4a259,
+          20px 20px 0 0 #f4a259,
+          30px 20px 0 0 #f4a259,
+          40px 20px 0 0 #f4a259,
+          50px 20px 0 0 #f4a259,
+          60px 20px 0 0 #f4a259,
+          70px 20px 0 0 #f4a259,
+          80px 20px 0 0 #f4a259,
+          20px 30px 0 0 #f4a259,
+          30px 30px 0 0 #f4a259,
+          40px 30px 0 0 #f4a259,
+          50px 30px 0 0 #f4a259,
+          60px 30px 0 0 #f4a259,
+          70px 30px 0 0 #f4a259,
+          30px 40px 0 0 #f4a259,
+          40px 40px 0 0 #f4a259,
+          50px 40px 0 0 #f4a259,
+          60px 40px 0 0 #f4a259,
+          40px 50px 0 0 #f4a259,
+          50px 50px 0 0 #f4a259,
+          20px 40px 0 0 #3f2a1d,
+          70px 40px 0 0 #3f2a1d,
+          30px 50px 0 0 #3f2a1d,
+          60px 50px 0 0 #3f2a1d,
+          40px 60px 0 0 #3f2a1d,
+          50px 60px 0 0 #3f2a1d,
+          80px 20px 0 0 #3f2a1d,
+          90px 20px 0 0 #3f2a1d,
+          80px 30px 0 0 #3f2a1d,
+          90px 30px 0 0 #3f2a1d,
+          0 20px 0 0 #3f2a1d,
+          0 30px 0 0 #3f2a1d,
+          10px 30px 0 0 #3f2a1d,
+          20px 60px 0 0 #3f2a1d,
+          70px 60px 0 0 #3f2a1d,
+          20px 70px 0 0 #3f2a1d,
+          30px 70px 0 0 #3f2a1d,
+          60px 70px 0 0 #3f2a1d,
+          70px 70px 0 0 #3f2a1d,
+          20px 80px 0 0 #3f2a1d,
+          30px 80px 0 0 #3f2a1d,
+          60px 80px 0 0 #3f2a1d,
+          70px 80px 0 0 #3f2a1d;
+        animation: cat-bob 1.1s steps(2, end) infinite;
+      }
+
+      .cat-sprite:before,
+      .cat-sprite:after {
+        content: '';
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: #3f2a1d;
+        top: -10px;
+      }
+
+      .cat-sprite:before {
+        left: 20px;
+        box-shadow:
+          10px 10px 0 0 #f4a259,
+          20px 10px 0 0 #f4a259,
+          30px 10px 0 0 #f4a259;
+        transform: rotate(12deg);
+      }
+
+      .cat-sprite:after {
+        right: -10px;
+        box-shadow:
+          -10px 10px 0 0 #f4a259,
+          -20px 20px 0 0 #f4a259,
+          -30px 30px 0 0 #f4a259,
+          -40px 40px 0 0 #f4a259,
+          -50px 50px 0 0 #f4a259;
+        transform-origin: top left;
+        animation: tail-sway 0.9s ease-in-out infinite alternate;
+      }
+
+      .cat-bubble {
+        position: absolute;
+        right: 70px;
+        bottom: 95px;
+        max-width: 185px;
+        padding: 10px 12px;
+        border: 3px solid #3f2a1d;
+        border-radius: 14px;
+        background: #fff8dc;
+        color: #3f2a1d;
+        font-size: 13px;
+        font-family: 'Courier New', monospace;
+        box-shadow: 0 8px 0 rgba(63, 42, 29, 0.18);
+        animation: bubble-cycle 7s infinite;
+      }
+
+      .cat-bubble:after {
+        content: '';
+        position: absolute;
+        right: 18px;
+        bottom: -13px;
+        width: 22px;
+        height: 22px;
+        background: #fff8dc;
+        border-right: 3px solid #3f2a1d;
+        border-bottom: 3px solid #3f2a1d;
+        transform: rotate(45deg);
+      }
+
+      .cat-bubble span {
+        white-space: normal;
+        display: block;
+        line-height: 1.25;
+      }
+
+      @keyframes cat-walk {
+        0% { transform: translateX(0) scaleX(1); }
+        49% { transform: translateX(-98px) scaleX(1); }
+        50% { transform: translateX(-98px) scaleX(-1); }
+        100% { transform: translateX(0) scaleX(-1); }
+      }
+
+      @keyframes cat-bob {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-2px); }
+      }
+
+      @keyframes tail-sway {
+        0% { transform: rotate(8deg); }
+        100% { transform: rotate(-10deg); }
+      }
+
+      @keyframes bubble-cycle {
+        0%, 56% {
+          opacity: 0;
+          transform: translateY(12px) scale(0.9);
+        }
+        62%, 92% {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(8px) scale(0.95);
+        }
+      }
       
       a{
         display: block;
@@ -150,10 +340,47 @@ ui <- fluidPage(
           inputId='transactionchoice',
           label='Filter by transaction',
           choices = as.vector(transaction_choices)
-        )
-        )
+      )
+    )
+  ),
+  tags$div(
+    class = "cat-overlay",
+    tags$div(
+      class = "cat-track",
+      tags$div(
+        id = "cat-joke-bubble",
+        class = "cat-bubble",
+        tags$span(id = "cat-joke-text")
+      ),
+      tags$div(class = "cat-sprite"),
+      tags$script(HTML("
+        (function() {
+          var jokes = [
+            'Why do programmers hate nature? Too many bugs.',
+            'A SQL query walks into a bar and asks for two tables.',
+            'There are only 10 kinds of people: those who understand binary and those who don\\'t.',
+            'Why did the developer go broke? Because he used up all his cache.',
+            'Debugging: being the detective in a crime movie where you are also the murderer.',
+            'How many programmers does it take to change a light bulb? None, that\\'s a hardware problem.'
+          ];
+          var bubble = document.getElementById('cat-joke-bubble');
+          var text = document.getElementById('cat-joke-text');
+
+          if (!bubble || !text) {
+            return;
+          }
+
+          function showJoke() {
+            text.textContent = jokes[Math.floor(Math.random() * jokes.length)];
+          }
+
+          showJoke();
+          window.setInterval(showJoke, 7000);
+        })();
+      "))
     )
   )
+)
 )
 
 # Define server logic required to draw a histogram
